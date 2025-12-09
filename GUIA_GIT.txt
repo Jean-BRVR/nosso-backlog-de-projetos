@@ -1,0 +1,46 @@
+
+COMO CORRIGIR A LIGAÇÃO AO GITHUB
+=================================
+
+Se apagou o repositório no GitHub mas ainda tem o código no seu computador, siga estes passos para voltar a enviar o código.
+
+PASSO 1: CRIAR NOVO REPOSITÓRIO
+1. Vá a github.com e clique em "New Repository".
+2. Dê um nome (ex: bariz-office).
+3. IMPORTANTE: Não adicione README, .gitignore ou License. Deixe o repositório vazio.
+4. Clique em "Create repository".
+5. Copie o URL HTTPS do repositório (ex: https://github.com/SEU_USER/bariz-office.git).
+
+PASSO 2: EXECUTAR COMANDOS NO TERMINAL
+Abra o terminal na pasta do seu projeto (onde estão os ficheiros do código) e execute os seguintes comandos, um de cada vez:
+
+1. Inicializar o git (caso não esteja, por segurança):
+   git init
+
+2. Adicionar todos os ficheiros atuais:
+   git add .
+
+3. Guardar as alterações locais:
+   git commit -m "Versão final do BarizOffice"
+
+4. Remover a ligação antiga (que dava erro):
+   git remote remove origin
+
+5. Adicionar a nova ligação (SUBSTITUA O LINK PELO SEU):
+   git remote add origin https://github.com/SEU_USUARIO/NOME_DO_REPO.git
+
+6. Garantir que o ramo principal se chama 'main':
+   git branch -M main
+
+7. Enviar o código para o GitHub:
+   git push -u origin main
+
+---
+
+ERROS COMUNS:
+
+- Se der erro "fatal: remote origin already exists":
+  Significa que não executou o passo 4. Execute `git remote remove origin` e tente adicionar novamente.
+
+- Se der erro de permissão/login:
+  O terminal pode pedir o seu utilizador e senha. Se usar autenticação de dois fatores, a senha deve ser um "Personal Access Token" gerado nas definições do GitHub, não a sua senha normal.

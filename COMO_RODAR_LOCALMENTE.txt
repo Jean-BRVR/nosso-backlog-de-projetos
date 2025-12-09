@@ -1,0 +1,149 @@
+GUIA PASSO A PASSO: RODAR O BARIZOFFICE LOCALMENTE
+==================================================
+
+Este guia explica como configurar o ambiente de desenvolvimento moderno (usando Vite) para rodar a aplicação sem erros de "process is not defined" (erro da chave) ou erros de importação.
+
+PRÉ-REQUISITOS:
+- Node.js instalado (versão 18 ou superior). Baixe em: https://nodejs.org/
+
+---
+
+PASSO 1: CRIAR A ESTRUTURA DO PROJETO
+1. Abra o terminal (Command Prompt ou Terminal).
+2. Navegue até onde quer criar o projeto.
+3. Execute o comando para criar um projeto React com TypeScript (Vite é mais rápido e estável):
+   
+   npm create vite@latest bariz-office -- --template react-ts
+
+4. Entre na pasta criada:
+   
+   cd bariz-office
+
+---
+
+PASSO 2: INSTALAR DEPENDÊNCIAS
+Instale as bibliotecas que o código utiliza (Google GenAI, Tailwind, Heroicons, UUID). Execute:
+
+npm install @google/genai @heroicons/react uuid
+npm install -D tailwindcss postcss autoprefixer
+
+---
+
+PASSO 3: CONFIGURAR O TAILWIND CSS
+1. Inicialize o Tailwind:
+   
+   npx tailwindcss init -p
+
+2. Abra o arquivo `tailwind.config.js` que foi criado na raiz e substitua o conteúdo por:
+
+   /** @type {import('tailwindcss').Config} */
+   export default {
+     content: [
+       "./index.html",
+       "./src/**/*.{js,ts,jsx,tsx}",
+     ],
+     theme: {
+       extend: {
+         colors: {
+           primary: '#3b82f6',
+           secondary: '#64748b',
+           canvas: '#f8fafc',
+         }
+       },
+     },
+     plugins: [],
+   }
+
+3. Abra o arquivo `src/index.css` e substitua TUDO pelo seguinte:
+
+   @tailwind base;
+   @tailwind components;
+   @tailwind utilities;
+
+   /* Custom scrollbar */
+   ::-webkit-scrollbar {
+     width: 8px;
+     height: 8px;
+   }
+   ::-webkit-scrollbar-track {
+     background: #f1f1f1;
+   }
+   ::-webkit-scrollbar-thumb {
+     background: #cbd5e1;
+     border-radius: 4px;
+   }
+   ::-webkit-scrollbar-thumb:hover {
+     background: #94a3b8;
+   }
+
+---
+
+PASSO 4: CONFIGURAR A CHAVE DA API (GEMINI)
+Para evitar o erro "API Key missing" ou "process is not defined", faremos a configuração segura.
+
+1. Obtenha sua chave em: https://aistudio.google.com/app/apikey
+2. Na raiz do projeto (ao lado do package.json), crie um arquivo chamado `.env` (apenas .env).
+3. Dentro dele, coloque:
+
+   VITE_API_KEY=sua_chave_comecada_com_AIza_aqui
+
+4. Agora, precisamos "enganar" o código para ele achar o `process.env.API_KEY`. 
+   Abra o arquivo `vite.config.ts` e substitua o conteúdo por:
+
+   import { defineConfig, loadEnv } from 'vite'
+   import react from '@vitejs/plugin-react'
+
+   export default defineConfig(({ mode }) => {
+     const env = loadEnv(mode, process.cwd(), '');
+     return {
+       plugins: [react()],
+       define: {
+         'process.env.API_KEY': JSON.stringify(env.VITE_API_KEY),
+       },
+     }
+   })
+
+---
+
+PASSO 5: COPIAR OS ARQUIVOS DO PROJETO
+Agora vamos mover o código fornecido para a estrutura do Vite.
+
+1. **src/types.ts**: Crie este arquivo dentro da pasta `src` e cole o código de `types.ts`.
+2. **src/services/geminiService.ts**: Crie a pasta `services` dentro de `src`, crie o arquivo `geminiService.ts` e cole o código.
+3. **src/components/ProjectWizard.tsx**: Crie a pasta `components` dentro de `src`, crie o arquivo e cole o código.
+4. **src/components/ProjectBoard.tsx**: Crie o arquivo na pasta `components` e cole o código.
+5. **src/App.tsx**: Substitua o conteúdo do `src/App.tsx` original pelo código do `App.tsx` fornecido.
+6. **src/main.tsx**: O Vite usa `main.tsx` em vez de `index.tsx`. Abra `src/main.tsx` e garanta que ele se parece com o `index.tsx` fornecido (importando o App e css):
+
+   import React from 'react'
+   import ReactDOM from 'react-dom/client'
+   import App from './App.tsx'
+   import './index.css'
+
+   ReactDOM.createRoot(document.getElementById('root')!).render(
+     <React.StrictMode>
+       <App />
+     </React.StrictMode>,
+   )
+
+7. **index.html**: Abra o `index.html` na raiz do projeto.
+   - Pode remover os scripts do Tailwind via CDN (pois instalamos localmente).
+   - Pode remover o `importmap`.
+   - Apenas mude o título para "Nosso backlog de projetos".
+
+---
+
+PASSO 6: RODAR O PROJETO
+1. No terminal, execute:
+   
+   npm run dev
+
+2. O terminal mostrará um link (geralmente `http://localhost:5173`).
+3. Abra esse link no navegador.
+
+SOLUÇÃO DE PROBLEMAS COMUNS:
+- **Erro 404 / Fetch Error ao gerar:** Verifique se a chave no arquivo `.env` está correta e se tem saldo/créditos no Google AI Studio.
+- **Tela Branca:** Verifique o Console do navegador (F12). Se disser "process is not defined", reveja o PASSO 4 (configuração do vite.config.ts).
+- **Erro de TypeScript (Tipos):** Se o editor reclamar de tipos, ignore por enquanto, o projeto deve rodar mesmo assim com `npm run dev`.
+
+Agora deve ter o sistema a funcionar perfeitamente na sua máquina!
