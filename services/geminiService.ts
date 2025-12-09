@@ -2,7 +2,7 @@
 
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { AIProjectResponse } from "../types";
-import { supabase } from "../supabaseClient"; // <-- NOVO: Importa o cliente Supabase (caminho ajustado à sua estrutura)
+import { supabase } from "../src/lib/supabase/supabaseClient"; // <-- NOVO: Importa o cliente Supabase (caminho ajustado à sua estrutura)
 
 const SYSTEM_INSTRUCTION = `
 You are an expert Agile Project Manager and Scrum Master. 
